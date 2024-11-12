@@ -1,0 +1,148 @@
+﻿ID,LAST_UPDATED_DATE,BODY,TITLE_RAW,URL,SOURCES,LANGUAGE,COMPANY,COMPANY_NAME,EXPIRED,POSTED,SKILLS,SKILLS_NAME,TITLE,TITLE_NAME,TITLE_CLEAN,NATION,OCCUPATION,OCCUPATION_NAME,SPECIALIZED_SKILLS,SPECIALIZED_SKILLS_NAME,COMMON_SKILLS,COMMON_SKILLS_NAME,SOFTWARE_SKILLS,SOFTWARE_SKILLS_NAME,CERTIFICATIONS,CERTIFICATIONS_NAME,REMOTE_TYPE,MAX_YEARS_EXPERIENCE,MIN_YEARS_EXPERIENCE
+8c7680fc0bf7102c41391e00947662ffdde8fd82,2024-03-26,"Canadian Bank Note is an industry leader in international currency design and production. We are globally recognized for our border management, passport, identity management, lotteries and excise control solutions. Our systems are designed to help keep countries safe from criminals around the world.
+    
+    Whats in it for you?
+    
+    As a Cloud Solutions architect, you own the solution end-to-end. It is your solution, and nobody knows it better than you. You will be accountable for defining the end-to-end system. You will technically manage the solution, working with stakeholders, estimators and project managers. Your challenge will be to ensure our systems that are deployed to production are secure, fully functional, on time and on budget. You will create a system that looks pretty comprehensive and all-inclusive on paper, to a fully deployed solution in production.
+    
+    What will you do?
+    
+    * Design customized systems based on customer requirements, budget and CBN Architectural standards
+    * Compare and evaluate technologies and deployment strategies
+    * Making recommendations at the monthly Architecture review Board Meetings
+    * Assemble racks touching all levels of the OSI layer to be delivered to our global clients
+    * Travel to some customer sites to install hardware and infrastructure
+    
+    What will help you succeed?
+    
+    Are you curious, methodical, rational, analytical, and logical? These are the traits that will help you succeed in the role. You will need to lean on your years of experience in Systems support and design. A post-secondary degree in Computer Science is the foundation of your knowledge.
+    
+    Hard Skills
+    
+    * Cloud Solution Architecture (AWS, Azure or Google)
+    
+    * Networking
+    * Linux: CentOS, RedHat
+    * Security
+    
+    * Windows: 2016 Core, AD, WSUS, DNS, DHCP
+    * Scripting and Automation: Teraform, puppet
+    
+    * Hardware: SuperMicro, HP,
+    * Technical Documentation
+    
+    Soft Skills
+    
+    * Ability to analyze costs
+    * Analytical thought process
+    * Strong technical documentation skills
+    * Strong Interpersonal skills
+    * Prioritization skills
+    * Ability to work independently, but escalate when necessary
+    
+    Mandatory Requirements
+    
+    * Domestic and international travel is required  up to 20%
+    * Eligibility and ability to maintain Government of Canada Secret (Level II) clearance
+    
+    People who enjoy variety and think beyond their job descriptions succeed here. As part of the team at CBN, you job is to take your career in new directions and be part of our customers success stories. So, if youre looking for the chance to work for a global company, explore new opportunities, and to deliver exceptional work to our customers, we want to hear from you!
+    
+    As an Equal Opportunity Employer, Canadian Bank Note Company, Limited is committed to achieving a skilled and diversified workforce that reflects the diversity of the Canadian population. We encourage applications from women, visible minorities, people with disabilities and Aboriginal people. Canadian Bank Note Company Limited is committed to developing inclusive, barrier-free selection processes and work environments. If contacted regarding this competition, please advise the interview coordinator of any accommodation measures you may require.",Cloud Solutions Architect,https://jobs.jobvite.com/cbnco/job/o4A88fwE?nl=1&nl=1&fr=false,"[
+  ""jobvite.com""
+]",en,1171686,Canadian Bank Note International Ltd.,2021-01-05,2020-11-05,"[
+  ""KS7G747655VG23WXMS9B"",
+  ""ES812939CB590F78C693"",
+  ""KS120V86MZWV9Z9LKQY3"",
+  ""KS120SQ5W4Q57JMD2Y81"",
+  ""KS1267F6MSPN366LX7ST"",
+  ""KS1259D6L30YYG3XR3VL"",
+  ""KS122VT6S2JJ5C5D80NF"",
+  ""KS121KB68PWHRPJCJKQJ"",
+  ""KS440RW6M035NGGH4ZBC"",
+  ""KS4418H63Z3RP725L3BW"",
+  ""KS7G0C36YW29VS8KPC05"",
+  ""KS120FG6YP8PQYYNQY9B"",
+  ""KS122RM6RTFWYVZQB39Q"",
+  ""KS123JH6161XFT0H3Z2C"",
+  ""KS125DR60FGNZBDCLD3S"",
+  ""KS4423G6BKW35ZSZ5N7C"",
+  ""KS1226Y6DNDT05G7FJ4J"",
+  ""ESA420F05EBBD34B3C2A""
+]","[
+  ""Prioritization"",
+  ""Puppet (Configuration Management Tool)"",
+  ""Microsoft Azure"",
+  ""Automation"",
+  ""Project Management"",
+  ""Interpersonal Communications"",
+  ""Linux"",
+  ""CentOS"",
+  ""Solution Architecture"",
+  ""Technical Documentation"",
+  ""Scripting"",
+  ""Amazon Web Services"",
+  ""Dynamic Host Configuration Protocol (DHCP)"",
+  ""End Systems"",
+  ""OSI Models"",
+  ""Windows Server Update Services"",
+  ""Computer Science"",
+  ""Curiosity""
+]",ETCEC91FFF4F7D10A7,Cloud Solution Architects,cloud solutions architect,CAN,e15b,Analysts and Data Scientists,"[
+  ""ES812939CB590F78C693"",
+  ""KS120V86MZWV9Z9LKQY3"",
+  ""KS120SQ5W4Q57JMD2Y81"",
+  ""KS1267F6MSPN366LX7ST"",
+  ""KS122VT6S2JJ5C5D80NF"",
+  ""KS121KB68PWHRPJCJKQJ"",
+  ""KS440RW6M035NGGH4ZBC"",
+  ""KS4418H63Z3RP725L3BW"",
+  ""KS7G0C36YW29VS8KPC05"",
+  ""KS120FG6YP8PQYYNQY9B"",
+  ""KS122RM6RTFWYVZQB39Q"",
+  ""KS123JH6161XFT0H3Z2C"",
+  ""KS125DR60FGNZBDCLD3S"",
+  ""KS4423G6BKW35ZSZ5N7C"",
+  ""KS1226Y6DNDT05G7FJ4J""
+]","[
+  ""Puppet (Configuration Management Tool)"",
+  ""Microsoft Azure"",
+  ""Automation"",
+  ""Project Management"",
+  ""Linux"",
+  ""CentOS"",
+  ""Solution Architecture"",
+  ""Technical Documentation"",
+  ""Scripting"",
+  ""Amazon Web Services"",
+  ""Dynamic Host Configuration Protocol (DHCP)"",
+  ""End Systems"",
+  ""OSI Models"",
+  ""Windows Server Update Services"",
+  ""Computer Science""
+]","[
+  ""KS7G747655VG23WXMS9B"",
+  ""KS1259D6L30YYG3XR3VL"",
+  ""ESA420F05EBBD34B3C2A""
+]","[
+  ""Prioritization"",
+  ""Interpersonal Communications"",
+  ""Curiosity""
+]","[
+  ""ES812939CB590F78C693"",
+  ""KS120V86MZWV9Z9LKQY3"",
+  ""KS122VT6S2JJ5C5D80NF"",
+  ""KS121KB68PWHRPJCJKQJ"",
+  ""KS120FG6YP8PQYYNQY9B"",
+  ""KS122RM6RTFWYVZQB39Q"",
+  ""KS125DR60FGNZBDCLD3S"",
+  ""KS4423G6BKW35ZSZ5N7C""
+]","[
+  ""Puppet (Configuration Management Tool)"",
+  ""Microsoft Azure"",
+  ""Linux"",
+  ""CentOS"",
+  ""Amazon Web Services"",
+  ""Dynamic Host Configuration Protocol (DHCP)"",
+  ""OSI Models"",
+  ""Windows Server Update Services""
+]",[],[],0,,
