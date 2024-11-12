@@ -190,4 +190,4 @@ def insert_jobs_and_skills(csv_file):
             print(f"Dados que causaram erro: {job_data}")
 
 # Uso
-insert_jobs_and_skills("all-jobs-11-11-2024.csv")
+insert_jobs_and_skills("12-11-2024-streamlit.csv")

@@ -69,53 +69,123 @@ def process_skills(row, supabase_client):
 def prepare_job_data(row):
     """Prepara os dados do job para inserção/atualização"""
     try:
-        # Converter datas
-        last_updated_date = pd.to_datetime(row['LAST_UPDATED_DATE']).strftime('%Y-%m-%d') if pd.notna(row['LAST_UPDATED_DATE']) else None
-        expired = pd.to_datetime(row['EXPIRED']).strftime('%Y-%m-%d') if pd.notna(row['EXPIRED']) else None
-        posted = pd.to_datetime(row['POSTED']).strftime('%Y-%m-%d') if pd.notna(row['POSTED']) else None
+        # Converter datas com tratamento de erro
+        try:
+            last_updated_date = pd.to_datetime(row['LAST_UPDATED_DATE']).strftime('%Y-%m-%d') if pd.notna(row['LAST_UPDATED_DATE']) else None
+            expired = pd.to_datetime(row['EXPIRED']).strftime('%Y-%m-%d') if pd.notna(row['EXPIRED']) else None
+            posted = pd.to_datetime(row['POSTED']).strftime('%Y-%m-%d') if pd.notna(row['POSTED']) else None
+        except (ValueError, TypeError):
+            last_updated_date = None
+            expired = None
+            posted = None
 
-        # Converter arrays
-        skills = ast.literal_eval(row['SKILLS']) if pd.notna(row['SKILLS']) else []
-        sources = ast.literal_eval(row['SOURCES']) if pd.notna(row['SOURCES']) else []
-        specialized_skills = ast.literal_eval(row['SPECIALIZED_SKILLS']) if pd.notna(row['SPECIALIZED_SKILLS']) else []
-        common_skills = ast.literal_eval(row['COMMON_SKILLS']) if pd.notna(row['COMMON_SKILLS']) else []
-        software_skills = ast.literal_eval(row['SOFTWARE_SKILLS']) if pd.notna(row['SOFTWARE_SKILLS']) else []
-        certifications = ast.literal_eval(row['CERTIFICATIONS']) if pd.notna(row['CERTIFICATIONS']) else []
+        # Converter arrays com tratamento de erro
+        try:
+            skills = ast.literal_eval(row['SKILLS']) if pd.notna(row['SKILLS']) else []
+            sources = ast.literal_eval(row['SOURCES']) if pd.notna(row['SOURCES']) else []
+            specialized_skills = ast.literal_eval(row['SPECIALIZED_SKILLS']) if pd.notna(row['SPECIALIZED_SKILLS']) else []
+            specialized_skills_name = ast.literal_eval(row['SPECIALIZED_SKILLS_NAME']) if pd.notna(row['SPECIALIZED_SKILLS_NAME']) else []
+            common_skills = ast.literal_eval(row['COMMON_SKILLS']) if pd.notna(row['COMMON_SKILLS']) else []
+            common_skills_name = ast.literal_eval(row['COMMON_SKILLS_NAME']) if pd.notna(row['COMMON_SKILLS_NAME']) else []
+            software_skills = ast.literal_eval(row['SOFTWARE_SKILLS']) if pd.notna(row['SOFTWARE_SKILLS']) else []
+            software_skills_name = ast.literal_eval(row['SOFTWARE_SKILLS_NAME']) if pd.notna(row['SOFTWARE_SKILLS_NAME']) else []
+            certifications = ast.literal_eval(row['CERTIFICATIONS']) if pd.notna(row['CERTIFICATIONS']) else []
+            certifications_name = ast.literal_eval(row['CERTIFICATIONS_NAME']) if pd.notna(row['CERTIFICATIONS_NAME']) else []
+        except (ValueError, SyntaxError):
+            skills = []
+            sources = []
+            specialized_skills = []
+            specialized_skills_name = []
+            common_skills = []
+            common_skills_name = []
+            software_skills = []
+            software_skills_name = []
+            certifications = []
+            certifications_name = []
 
-        return {
+        # Converter company para bigint
+        try:
+            company = int(row['COMPANY']) if pd.notna(row['COMPANY']) and row['COMPANY'] != '0' and row['COMPANY'] != '' else None
+        except (ValueError, TypeError):
+            company = None
+
+        # Converter anos de experiência para integer
+        try:
+            max_years = int(row['MAX_YEARS_EXPERIENCE']) if pd.notna(row['MAX_YEARS_EXPERIENCE']) and row['MAX_YEARS_EXPERIENCE'] != '' else None
+            min_years = int(row['MIN_YEARS_EXPERIENCE']) if pd.notna(row['MIN_YEARS_EXPERIENCE']) and row['MIN_YEARS_EXPERIENCE'] != '' else None
+        except (ValueError, TypeError):
+            max_years = None
+            min_years = None
+
+        job_data = {
             "id": row['ID'],
             "last_updated_date": last_updated_date,
-            "body": row['BODY'],
-            "title_raw": row['TITLE_RAW'],
-            "url": row['URL'],
+            "body": row['BODY'] if pd.notna(row['BODY']) else None,
+            "title_raw": row['TITLE_RAW'] if pd.notna(row['TITLE_RAW']) else None,
+            "url": row['URL'] if pd.notna(row['URL']) else None,
             "sources": sources,
-            "language": row['LANGUAGE'],
-            "company": row['COMPANY'],
-            "company_name": row['COMPANY_NAME'],
+            "language": row['LANGUAGE'] if pd.notna(row['LANGUAGE']) else None,
+            "company": company,
+            "company_name": row['COMPANY_NAME'] if pd.notna(row['COMPANY_NAME']) else None,
             "expired": expired,
             "posted": posted,
             "skills": skills,
-            "title": row['TITLE'],
-            "title_name": row['TITLE_NAME'],
-            "title_clean": row['TITLE_CLEAN'],
-            "nation": row['NATION'],
-            "occupation": row['OCCUPATION'],
-            "occupation_name": row['OCCUPATION_NAME'],
+            "title": row['TITLE'] if pd.notna(row['TITLE']) else None,
+            "title_name": row['TITLE_NAME'] if pd.notna(row['TITLE_NAME']) else None,
+            "title_clean": row['TITLE_CLEAN'] if pd.notna(row['TITLE_CLEAN']) else None,
+            "nation": row['NATION'] if pd.notna(row['NATION']) else None,
+            "occupation": row['OCCUPATION'] if pd.notna(row['OCCUPATION']) else None,
+            "occupation_name": row['OCCUPATION_NAME'] if pd.notna(row['OCCUPATION_NAME']) else None,
             "specialized_skills": specialized_skills,
-            "specialized_skills_name": row['SPECIALIZED_SKILLS_NAME'],
+            "specialized_skills_name": specialized_skills_name,
             "common_skills": common_skills,
-            "common_skills_name": row['COMMON_SKILLS_NAME'],
+            "common_skills_name": common_skills_name,
             "software_skills": software_skills,
-            "software_skills_name": row['SOFTWARE_SKILLS_NAME'],
+            "software_skills_name": software_skills_name,
             "certifications": certifications,
-            "certifications_name": row['CERTIFICATIONS_NAME'],
-            "remote_type": row['REMOTE_TYPE'],
-            "max_years_experience": row['MAX_YEARS_EXPERIENCE'],
-            "min_years_experience": row['MIN_YEARS_EXPERIENCE'],
+            "certifications_name": certifications_name,
+            "remote_type": row['REMOTE_TYPE'] if pd.notna(row['REMOTE_TYPE']) else None,
+            "max_years_experience": max_years,
+            "min_years_experience": min_years,
             "last_update_import": datetime.datetime.now().isoformat()
         }
+
+        # Remover campos None ou vazios
+        job_data = {k: v for k, v in job_data.items() if v is not None and v != ''}
+
+        # Garantir que arrays sejam enviados corretamente
+        for array_field in ['sources', 'skills', 'specialized_skills', 'specialized_skills_name', 
+                          'common_skills', 'common_skills_name', 'software_skills', 
+                          'software_skills_name', 'certifications', 'certifications_name']:
+            if array_field in job_data and job_data[array_field] is not None:
+                if isinstance(job_data[array_field], str):
+                    try:
+                        job_data[array_field] = ast.literal_eval(job_data[array_field])
+                    except:
+                        job_data[array_field] = []
+                elif not isinstance(job_data[array_field], list):
+                    job_data[array_field] = []
+
+        return job_data
+
     except Exception as e:
         raise Exception(f"Erro ao preparar dados do job: {str(e)}")
+
+def verify_company(row, supabase_client):
+    """Verifica e cria company se necessário"""
+    try:
+        company = int(row['COMPANY']) if pd.notna(row['COMPANY']) and row['COMPANY'] != '0' and row['COMPANY'] != '' else None
+        
+        if company:
+            company_exists = supabase_client.table('company').select('*').eq('id', company).execute()
+            if not company_exists.data:
+                company_data = {
+                    "id": company,
+                    "company_name": row['COMPANY_NAME']
+                }
+                supabase_client.table('company').insert(company_data).execute()
+    except Exception as e:
+        raise Exception(f"Erro ao verificar company: {str(e)}")
 
 # Interface Streamlit
 st.title("Importador de Jobs para Supabase")
@@ -174,6 +244,9 @@ if uploaded_file is not None:
                             
                             # Prepara os dados do job
                             job_data = prepare_job_data(row)
+                            
+                            # Dentro do loop de processamento, antes de inserir/atualizar o job
+                            verify_company(row, supabase)
                             
                             if existing_job.data:
                                 # Atualiza job existente
