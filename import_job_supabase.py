@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from utils.data_processor import prepare_job_data, process_skills
-from utils.supabase_handler import init_supabase, verify_company, verify_title
+from utils.supabase_handler import init_supabase, verify_company, verify_title, insert_or_update_job
 import time
 from datetime import datetime
 
@@ -23,97 +23,50 @@ def get_supabase():
 def load_csv(file):
     return pd.read_csv(file, dtype=str)
 
-def create_status_containers():
-    """Cria containers para status e métricas"""
-    status_area = st.container()
-    col1, col2, col3, col4, col5 = status_area.columns(5)
-    
-    metrics = {
-        "total": col1.empty(),
-        "processados": col2.empty(),
-        "atualizados": col3.empty(),
-        "novos": col4.empty(),
-        "erros": col5.empty()
+def initialize_metrics():
+    """Inicializa as métricas com valores zero"""
+    return {
+        "total": 0,
+        "processados": 0,
+        "atualizados": 0,
+        "novos": 0,
+        "erros": 0
     }
-    
-    progress = st.progress(0)
-    log = st.empty()
-    error_log = st.empty()
-    
-    return metrics, progress, log, error_log
 
-def process_batch(batch_df, supabase, metrics, total_rows, current_stats):
-    """Processa um lote de registros"""
-    for idx, row in batch_df.iterrows():
+def process_batch(df_batch, supabase, stats):
+    """Processa um lote de dados"""
+    error_messages = []
+    
+    for index, row in df_batch.iterrows():
         try:
-            # Verifica/cria dependências
-            verify_title(row, supabase)
-            verify_company(row, supabase)
+            print(f"\nProcessando linha {index + 1}")
+            print(f"ID do Job: {row['ID']}")
             
-            # Prepara e insere/atualiza job
-            job_data = prepare_job_data(row)
-            existing_job = supabase.table('jobs').select('*').eq('id', row['ID']).execute()
+            result = insert_or_update_job(row, supabase)
             
-            if existing_job.data:
-                supabase.table('jobs').update(job_data).eq('id', row['ID']).execute()
-                current_stats["atualizados"] += 1
-            else:
-                supabase.table('jobs').insert(job_data).execute()
-                current_stats["novos"] += 1
-            
-            process_skills(row, supabase)
-            current_stats["processados"] += 1
+            if result in ['inserted', 'updated']:
+                process_skills(row, supabase)
+                stats["processados"] += 1
+                if result == 'inserted':
+                    stats["novos"] += 1
+                else:
+                    stats["atualizados"] += 1
             
         except Exception as e:
-            current_stats["erros"] += 1
-            current_stats["error_details"].append(f"Erro no registro {idx + 1}: {str(e)}")
-            if len(current_stats["error_details"]) > 5:
-                current_stats["error_details"].pop(0)
-        
-        # Atualiza métricas
-        progress = (current_stats["processados"] + current_stats["erros"]) / total_rows
-        update_metrics(metrics, current_stats, progress)
-        
-    return current_stats
-
-def update_metrics(metrics, stats, progress):
-    """Atualiza as métricas na interface"""
-    metrics["total"].metric("Total", stats["total"], help="Total de registros a processar")
-    metrics["processados"].metric("Processados", stats["processados"], 
-                                delta=f"{(stats['processados']/stats['total']*100):.1f}%")
-    metrics["atualizados"].metric("Atualizados", stats["atualizados"])
-    metrics["novos"].metric("Novos", stats["novos"])
-    metrics["erros"].metric("Erros", stats["erros"], 
-                          delta_color="inverse" if stats["erros"] > 0 else "off")
+            stats["erros"] += 1
+            error_message = f"Erro na linha {index + 1}, Job ID {row.get('ID', 'desconhecido')}: {str(e)}"
+            print(error_message)
+            error_messages.append(error_message)
+    
+    return stats, error_messages
 
 def main():
-    # Estilo personalizado
-    st.markdown("""
-        <style>
-        .main { padding: 2rem; }
-        .stProgress > div > div > div > div { background-color: #1f77b4; }
-        .status-box {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-        }
-        .success { background-color: #d4edda; color: #155724; }
-        .error { background-color: #f8d7da; color: #721c24; }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Interface principal
     st.title("🚀 Importador de Jobs para Supabase")
     
-    # Sidebar
+    # Configurações na sidebar
     with st.sidebar:
         st.header("⚙️ Configurações")
-        batch_size = st.slider("Tamanho do lote", 1, 100, 30)
-        retry_attempts = st.number_input("Tentativas em caso de erro", 1, 5, 3)
-        retry_delay = st.number_input("Delay entre tentativas (seg)", 1, 10, 2)
-        
-        st.header("🔍 Opções")
-        debug_mode = st.checkbox("Modo Debug", value=False)
+        batch_size = st.slider("Tamanho do lote", 1, 100, 10)
         show_errors = st.checkbox("Mostrar Erros Detalhados", value=True)
     
     # Upload do arquivo
@@ -121,69 +74,62 @@ def main():
     
     if uploaded_file:
         try:
-            df = pd.read_csv(uploaded_file, dtype=str)
-            total_rows = len(df)
+            df = load_csv(uploaded_file)
+            st.info(f"Arquivo carregado com {len(df)} registros")
             
             # Preview dos dados
-            with st.expander("📊 Preview dos dados", expanded=False):
+            with st.expander("📊 Preview dos dados"):
                 st.dataframe(df.head())
             
-            # Criar containers de status
-            metrics, progress_bar, log_area, error_area = create_status_containers()
-            
-            if st.button("🚀 Iniciar Processamento", type="primary"):
+            if st.button("🚀 Iniciar Processamento"):
                 supabase = get_supabase()
+                stats = initialize_metrics()
+                stats["total"] = len(df)
                 
-                # Estatísticas iniciais
-                stats = {
-                    "total": total_rows,
-                    "processados": 0,
-                    "atualizados": 0,
-                    "novos": 0,
-                    "erros": 0,
-                    "error_details": []
-                }
+                # Containers para métricas e progresso
+                col1, col2, col3, col4, col5 = st.columns(5)
+                progress_bar = st.progress(0)
+                error_container = st.empty()
                 
                 # Processamento em lotes
-                for batch_start in range(0, total_rows, batch_size):
-                    batch_end = min(batch_start + batch_size, total_rows)
-                    batch_df = df.iloc[batch_start:batch_end]
-                    
-                    log_area.info(f"Processando lote {batch_start//batch_size + 1} de {(total_rows + batch_size - 1)//batch_size}")
+                all_errors = []
+                for i in range(0, len(df), batch_size):
+                    batch_df = df.iloc[i:i+batch_size]
                     
                     # Processa o lote
-                    stats = process_batch(batch_df, supabase, metrics, total_rows, stats)
+                    stats, errors = process_batch(batch_df, supabase, stats)
+                    all_errors.extend(errors)
                     
-                    # Mostra erros se houver
-                    if show_errors and stats["error_details"]:
-                        error_area.error("\n".join(stats["error_details"]))
+                    # Atualiza métricas
+                    col1.metric("Total", stats["total"])
+                    col2.metric("Processados", stats["processados"], 
+                              f"{(stats['processados']/stats['total']*100):.1f}%")
+                    col3.metric("Atualizados", stats["atualizados"])
+                    col4.metric("Novos", stats["novos"])
+                    col5.metric("Erros", stats["erros"])
                     
                     # Atualiza barra de progresso
-                    progress = (batch_end) / total_rows
+                    progress = (i + len(batch_df)) / len(df)
                     progress_bar.progress(progress)
                     
-                    time.sleep(0.1)  # Pequena pausa entre lotes
+                    time.sleep(0.1)
+                
+                # Mostra erros se houver
+                if show_errors and all_errors:
+                    with st.expander("❌ Erros encontrados"):
+                        for error in all_errors:
+                            st.error(error)
                 
                 # Resultado final
                 st.success(f"""
                     ✅ Processamento concluído!
-                    - Total: {stats['total']}
-                    - Processados com sucesso: {stats['processados']} ({stats['processados']/stats['total']*100:.1f}%)
+                    - Total processado: {stats['total']}
+                    - Sucessos: {stats['processados']}
                     - Atualizados: {stats['atualizados']}
                     - Novos: {stats['novos']}
-                    - Erros: {stats['erros']} ({stats['erros']/stats['total']*100:.1f}%)
+                    - Erros: {stats['erros']}
                 """)
                 
-                # Download do log de erros se houver
-                if stats["error_details"]:
-                    error_log = "\n".join(stats["error_details"])
-                    st.download_button(
-                        "📥 Download log de erros",
-                        error_log,
-                        "error_log.txt",
-                        "text/plain"
-                    )
-        
         except Exception as e:
             st.error(f"Erro ao processar arquivo: {str(e)}")
 
