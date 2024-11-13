@@ -14,4 +14,4 @@ services:
   health_check:
     http_path: /_stcore/health
   instance_count: 1
-  instance_size_slug: basic-xxs
+  instance_size_slug: basic-xxs\
