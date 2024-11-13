@@ -1,0 +1,1 @@
+web: streamlit run import_job_supabase.py
