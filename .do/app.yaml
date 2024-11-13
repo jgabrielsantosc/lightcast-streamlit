@@ -1,15 +1,9 @@
 name: job-importer
 services:
 - name: web
-  dockerfile_path: Dockerfile
   github:
     branch: main
     deploy_on_push: true
-    repo: seu-usuario/seu-repositorio
-  health_check:
-    http_path: /_stcore/health
-  instance_count: 1
-  instance_size_slug: basic-xxs
   envs:
   - key: SUPABASE_URL
     scope: RUN_TIME
@@ -17,3 +11,7 @@ services:
   - key: SUPABASE_KEY
     scope: RUN_TIME
     type: SECRET
+  health_check:
+    http_path: /_stcore/health
+  instance_count: 1
+  instance_size_slug: basic-xxs

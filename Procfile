@@ -1,1 +1,1 @@
-web: streamlit run import_job_supabase.py
+web: streamlit run --server.port $PORT import_job_supabase.py
